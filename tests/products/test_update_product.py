@@ -4,53 +4,70 @@ from src.helpers.apis.product import ProductAPI
 from src.helpers.dao.product import ProductDAO
 
 
+@pytest.fixture(scope='function')
+def created_product_id():
+    response_create = ProductAPI.create_new_item()
+    id = response_create['json']['id']
+    logger.debug(f"Product created: {id}")
+    yield id
+    ProductDAO.delete_item_by_id(id)
+    logger.debug(f"Product deleted: {id}")
+
+
 @pytest.mark.tcid_61
-def test_update_product_regular_price():
+def test_update_product_regular_price(created_product_id):
     logger.info("TEST: Verify update 'regular_price' updates 'price' field")
+    
     
     response_create = ProductAPI.create_new_item()
     created_product_id = response_create['json']['id']
 
+
+    response_create = ProductAPI.create_new_item()
+    created_product_id = response_create['json']['id']
+
     new_price = "120.0"
-    response_update = ProductAPI.update_item_by_id(created_product_id, params={'regular_price': new_price})
+    response_update = ProductAPI.update_item_by_id(created_product_id, 
+                                                   params={'regular_price': new_price})
     regular_price_updated = response_update['json']['regular_price']
     price_updated = response_update['json']['price']
     assert regular_price_updated == new_price, f"'regular_price' value of product is not updated. Actual: {regular_price_updated}. Expected: {new_price}"
     assert price_updated == new_price, f"'price' value of product is not equal to updated 'regular_price'. Actual: {price_updated}. Expected: {new_price}"
 
+
 @pytest.mark.tcid_65
 @pytest.mark.tcid_63
-def test_update_product_sale_price_more_than_0():
+def test_update_product_sale_price_more_than_0(created_product_id):
     logger.info("TEST: Verify update 'sale_price > 0' will set field 'on_sale'=True")
     logger.info("TEST: Verify update 'sale_price' updates the 'sale_price' field")
-    
-    new_price = "120.0"
-    response_create = ProductAPI.create_new_item(params={'regular_price': new_price})
-    created_product_id = response_create['json']['id']
 
-    sale_price = "80.0" 
-    response_update = ProductAPI.update_item_by_id(created_product_id, params={'sale_price': sale_price})
+    start_price = "120.0"
+    sale_price = "80.0"
+    response_update_regular = ProductAPI.update_item_by_id(created_product_id, 
+                                                           params={'regular_price': start_price})
+    regular_price_before = response_update_regular['json']['regular_price']
 
-    regular_price_updated = response_update['json']['regular_price']
-    price_updated = response_update['json']['price']
-    sale_price_updated = response_update['json']['sale_price']
-    on_sale_updated = response_update['json']['on_sale']
+    response_update_sale = ProductAPI.update_item_by_id(created_product_id, 
+                                                        params={'sale_price': sale_price})
+    regular_price_after = response_update_sale['json']['regular_price']
+    price_updated = response_update_sale['json']['price']
+    sale_price_updated = response_update_sale['json']['sale_price']
+    on_sale_updated = response_update_sale['json']['on_sale']
 
     assert sale_price_updated == sale_price, f"'sale_price' value of product is not updated. Actual: {sale_price_updated}. Expected: {sale_price}"
-    assert regular_price_updated == new_price, f"'regular_price' value of product is changed. Actual: {regular_price_updated}. Expected: {new_price}"
+    assert regular_price_after == regular_price_before, f"'regular_price' value of product is changed. Actual: {regular_price_after}. Expected: {regular_price_before}"
     assert price_updated == sale_price, f"'price' value of product is not updated. Actual: {price_updated}. Expected: {sale_price}"
     assert on_sale_updated, f"'on_sale' value of product is {on_sale_updated}. Expected: {True}"
 
 
 @pytest.mark.tcid_64
-def test_update_product_sale_price_with_empty_value():
+def test_update_product_sale_price_with_empty_value(created_product_id):
     logger.info("TEST: Verify update 'sale_price=" "' will set field 'on_sale'=False")
     
     new_price = "120.0"
     sale_price = "80.0"
-    response_create = ProductAPI.create_new_item(params={'regular_price': new_price, 'sale_price': sale_price})
-    created_product_id = response_create['json']['id']
-    
+    ProductAPI.update_item_by_id(created_product_id, params={'regular_price': new_price, 'sale_price': sale_price})
+
     response_update = ProductAPI.update_item_by_id(created_product_id, params={'sale_price': " "})
 
     price_updated = response_update['json']['price']

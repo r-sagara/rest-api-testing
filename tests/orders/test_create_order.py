@@ -1,7 +1,6 @@
 import pytest
 import logging as logger
 from src.helpers.apis.order import OrderAPI
-from src.helpers.dao.product import ProductDAO
 from src.helpers.dao.order import OrderDAO
 from src.helpers.apis.product import ProductAPI
 from tests.test_data.templates import Templates
@@ -45,3 +44,8 @@ def test_create_order_as_guest_user():
     db_line_item_details = OrderDAO.get_line_item_details_by_item_id(db_line_items[0]['order_item_id'])
     assert int(db_line_item_details['_line_total']) == expected_total_amount, f"Order total amount from db ({db_line_item_details['_line_total']}) is not equal to calculated ({expected_total_amount})"
     assert int(db_line_item_details['_product_id']) == created_product['id'], f"Order total amount from db ({db_line_item_details['_product_id']}) is not equal to calculated ({created_product['id']})"
+
+
+@pytest.mark.tcid_49
+def test_create_order_with_existing_user():
+    pass

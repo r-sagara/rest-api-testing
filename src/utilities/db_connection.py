@@ -37,5 +37,11 @@ class DBConnection:
         limit = f"limit {limit}" if limit else ""
         query = f"select {field} from {table} {condition} {order_by} {limit};"
         return self.execute_sql(query)
+    
+    def execute_delete(self, table, condition=""):
+        if condition:
+            condition = f"where {condition}"
+        query = f"delete from {table} {condition};"
+        self.execute_sql(query)
 
     
