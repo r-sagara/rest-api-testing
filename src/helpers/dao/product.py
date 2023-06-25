@@ -12,7 +12,7 @@ class ProductDAO(GeneralDAO):
         return last_item
     
     @classmethod
-    def get_product_details(cls, product_id):
+    def get_product_details_by_id(cls, product_id):
         db_response = cls.db.execute_select("meta_key, meta_value", cls.details_table, condition=f"post_id = {product_id}") 
         details = {row['meta_key']:row['meta_value'] for row in db_response}
         logger.debug(details)

@@ -23,6 +23,7 @@ class DBConnection:
         logger.debug("Connection to database established")
         cursor = connection.cursor(DictCursor)
         cursor.execute(sql_query)
+        logger.debug(f"QUERY: {sql_query}")
         db_response = cursor.fetchall()
         connection.close()
         logger.debug("Connection to database closed")
