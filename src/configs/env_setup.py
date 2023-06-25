@@ -13,3 +13,7 @@ class APIkeys:
 class DBkeys:
     user: str = os.environ.get("DB_USER")
     password: str = os.environ.get("DB_PASS")
+
+@dataclass(frozen=True)
+class Environment:
+    machine: str = os.environ.get('MACHINE')

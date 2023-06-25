@@ -1,22 +1,23 @@
-from src.configs.hosts import DB_HOSTS, DB_PORT
-from src.configs.credentials import DBkeys
+from src.configs.hosts import DB_HOSTS
+from src.configs.env_setup import DBkeys, Environment
 import logging as logger
 import pymysql
 from pymysql.cursors import DictCursor
 import os
 
 class DBConnection:
+    machine = Environment.machine
+    assert machine, f"MACHINE variable is empty value"
+
     env = os.environ.get('ENV', 'test')
-    db_host = DB_HOSTS[env]
-    db_port = DB_PORT[env]
     db_auth = DBkeys
 
-    def __init__(self, database) -> None:
-        self.connection_data = {"host": self.db_host,
-                                "port": self.db_port,
+    def __init__(self) -> None:
+        self.connection_data = {"host": DB_HOSTS[self.machine][self.env]['host'],
+                                "port": DB_HOSTS[self.machine][self.env]['port'],
                                 "user": self.db_auth.user, 
                                 "password": self.db_auth.password,
-                                "db": database}
+                                "db": DB_HOSTS[self.machine][self.env]['name']}
 
     def execute_sql(self, sql_query):
         connection = pymysql.connect(**self.connection_data)

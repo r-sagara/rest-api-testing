@@ -1,30 +1,11 @@
 import pytest
 import logging as logger
 from src.helpers.apis.product import ProductAPI
-from src.helpers.dao.product import ProductDAO
-
-
-@pytest.fixture(scope='function')
-def created_product_id():
-    response_create = ProductAPI.create_new_item()
-    id = response_create['json']['id']
-    logger.debug(f"Product created: {id}")
-    yield id
-    ProductDAO.delete_item_by_id(id)
-    logger.debug(f"Product deleted: {id}")
 
 
 @pytest.mark.tcid_61
 def test_update_product_regular_price(created_product_id):
     logger.info("TEST: Verify update 'regular_price' updates 'price' field")
-    
-    
-    response_create = ProductAPI.create_new_item()
-    created_product_id = response_create['json']['id']
-
-
-    response_create = ProductAPI.create_new_item()
-    created_product_id = response_create['json']['id']
 
     new_price = "120.0"
     response_update = ProductAPI.update_item_by_id(created_product_id, 

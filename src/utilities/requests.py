@@ -1,5 +1,5 @@
 from src.configs.hosts import API_HOSTS
-from src.configs.credentials import APIkeys
+from src.configs.env_setup import APIkeys
 from requests_oauthlib import OAuth1
 import logging as logger
 import requests

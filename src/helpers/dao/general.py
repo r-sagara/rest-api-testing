@@ -4,7 +4,7 @@ import logging as logger
 class GeneralDAO:
     table = None
 
-    db = DBConnection("wowsite")
+    db = DBConnection()
     
     @classmethod
     def get_item_by_id(cls, id=1, alt_id_name=None):

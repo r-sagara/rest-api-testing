@@ -5,15 +5,24 @@ API_HOSTS = {
 }
 
 DB_HOSTS = {
-    "test": "localhost",
-    "dev": "localhost",
-    "prod": "localhost"
+    "machine1": {
+        "test": {
+            "host": "localhost",
+            "socket": None,
+            "port": 3306,
+            "name": "wowsite"
+        },
+        "dev": None,
+        "prod": None
+    },
+    "work_machine": {
+        "test": {
+            "host": "localhost",
+            "socket": None,
+            "port": 3306,
+            "name": "wowsite"
+        },
+        "dev": None,
+        "prod": None
+    }
 }
-
-DB_PORT = {
-    "test": 3306,
-    "dev": 3306,
-    "prod": 3306
-}
-
-DB_NAME = "wowsite"
