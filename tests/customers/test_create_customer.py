@@ -18,14 +18,14 @@ def test_create_customer_with_only_email_and_password():
     customer_response_code = customer_response["status_code"]
     assert customer_response_code == 201, f"Response status code is wrong: {customer_response_code}. Expected: {201}"
 
-    customer_json = customer_response["json"]
-    assert customer_json["email"] == email, f"Emails in request and response are not equal"
-    assert customer_json["username"] == email.split('@')[0], f"Username in response is not equal to email name in request"
-    assert not customer_json["first_name"], f"First name is not empty value, although it wasn't sent in request"
+    customer_json = customer_response['json']
+    assert customer_json['email'] == email, f"Emails in request and response are not equal"
+    assert customer_json['username'] == email.split('@')[0], f"Username in response is not equal to email name in request"
+    assert not customer_json['first_name'], f"First name is not empty value, although it wasn't sent in request"
     
     customer_db_records = CustomerDAO.get_item_by_email(email)
     assert len(customer_db_records) == 1, f"The number of records with such email {email} is not equal to 1"
-    assert customer_db_records[0]["ID"] == customer_json["id"], f"User ID in response and database are not equal"
+    assert customer_db_records[0]['ID'] == customer_json['id'], f"User ID in response and database are not equal"
 
 
 @pytest.mark.tcid_47
@@ -33,11 +33,11 @@ def test_create_customer_with_existing_email():
     logger.info("TEST: Verify 'create customer' failes if email exists")
 
     customer_from_db = CustomerDAO.get_last_item_in_table()
-    email = customer_from_db["user_email"]
+    email = customer_from_db['user_email']
 
     customer = Customer(email=email)
     customer_response = CustomerAPI.create_new_item(customer.payload())
     
-    customer_response_code = customer_response["status_code"]
+    customer_response_code = customer_response['status_code']
     assert customer_response_code == 400, f"Response status code is wrong: {customer_response_code}. Expected: {400}"
-    assert customer_response["json"]["code"] == "registration-error-email-exists"
+    assert customer_response['json']['code'] == "registration-error-email-exists"

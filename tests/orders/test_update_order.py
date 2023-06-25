@@ -2,46 +2,50 @@ import pytest
 import logging as logger
 from src.helpers.apis.order import OrderAPI
 from src.helpers.dao.order import OrderDAO
-from src.helpers.apis.product import ProductAPI
-from tests.test_data.templates import Templates
-from src.utilities.generic import generate_random_email
 
 
-@pytest.mark.tcid_55
-def test_update_order_status():
-    logger.info("TEST: Update order status to 'canceled'")
-
-    product_price = 120
-    response_create = ProductAPI.create_new_item(params={'regular_price': str(product_price)})
-    created_product = response_create['json']
-
-    payload = Templates.paid_order.copy()
-    test_user_email = generate_random_email()
-    payload['billing']['email'] = test_user_email
+@pytest.mark.parametrize('new_status', [pytest.param("cancelled", marks=pytest.mark.tcid_55),
+                                        pytest.param("completed", marks=pytest.mark.tcid_56),
+                                        pytest.param("on-hold", marks=pytest.mark.tcid_57)])
+def test_update_order_status(created_order, new_status):
+    logger.info(f"TEST: Update order status to '{new_status}'")
     
-    line_item_link = payload['line_items'][0]
-    line_item_link['product_id'] = created_product['id']
-    line_item_link['quantity'] = 2
+    created_order_id = created_order['id']
+    response_update = OrderAPI.update_item_by_id(created_order_id, params={"status": new_status})
+    assert response_update['status_code'] == 201, "Wrong status code"
+
+    response = OrderAPI.get_item_by_id(created_order_id)
+    updated_status = response['json']['status']
+    assert updated_status == new_status, f"Order status is not updated. Actual: {response['status']}. Expected: {new_status}"
+
+
+@pytest.mark.tcid_58
+def test_update_order_status_with_random_string(created_order):
+    logger.info("TEST: Update order status to random string")
     
-    # response verify
-    response = OrderAPI.create_new_item(params=payload)
+    new_status = 'blabla'
+    created_order_id = created_order['id']
+    response = OrderAPI.update_item_by_id(created_order_id, params={"status": new_status})
+    response_code = response['status_code']
+    response_json = response['json']
+ 
+    expected_status_code = 400
+    expected_error_code = "rest_invalid_param"
+    assert response_code == expected_status_code, f"Received status code ({response_code}) is not equal to expected ({expected_status_code})."
+    assert response_json['code'] == expected_error_code, f"Received error code ({response_json['code']}) is not equal to expected ({expected_error_code})."
 
-    created_order = response['json']
-    created_line_item = created_order['line_items'][0]
-    assert created_order, f"Created order is empty value"
-    assert created_line_item, f"No line items in created order"
 
-    assert created_order['billing']['email'] == test_user_email, f"Guest email in created order ({created_order['billing']['email']}) is not equal to specified in request ({test_user_email})"
-    assert created_line_item['product_id'] == created_product['id'], f"Product id in response ({created_line_item['product_id']}) is not equal to specified in request ({created_product['id']})"
+@pytest.mark.tcid_59
+def test_update_order_custom_note(created_order):
+    logger.info("TEST: Update order 'customer_note'")
     
-    expected_total_amount = line_item_link['quantity'] * product_price
-    assert float(created_line_item['subtotal']) == expected_total_amount, f"Order total amount from response ({created_line_item['subtotal']}) is not equal to calculated ({expected_total_amount})"
-    
-    db_line_items = OrderDAO.get_line_items_by_order_id(created_order['id'])
-    assert len(db_line_items) == len(payload['line_items']), f"Amount of line items in db ({len(db_line_items)}) is not equal to expected {len(payload['line_items'])}"
+    new_customer_note = 'Test customer note'
+    created_order_id = created_order['id']
+    response_update = OrderAPI.update_item_by_id(created_order_id, params={"customer_note": new_customer_note})
+    assert response_update['status_code'] == 200, "Wrong status code"
 
-    # db verify
-    db_line_item_details = OrderDAO.get_line_item_details_by_item_id(db_line_items[0]['order_item_id'])
-    assert int(db_line_item_details['_line_total']) == expected_total_amount, f"Order total amount from db ({db_line_item_details['_line_total']}) is not equal to calculated ({expected_total_amount})"
-    assert int(db_line_item_details['_product_id']) == created_product['id'], f"Order total amount from db ({db_line_item_details['_product_id']}) is not equal to calculated ({created_product['id']})"
+    response_get = OrderAPI.get_item_by_id(created_order_id)
+    assert response_get['status_code'] == 200, "Wrong status code"
 
+    actual_customer_note = response_get['json']['customer_note']
+    assert actual_customer_note == new_customer_note, f"Received customer note ({actual_customer_note}) is not equal to expected ({new_customer_note})."

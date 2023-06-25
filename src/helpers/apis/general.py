@@ -6,7 +6,7 @@ class GeneralAPI:
 
     @classmethod
     def create_new_item(cls, params=None):
-        response = Request.post(cls.endpoint, payload=params)
+        response = Request.post(cls.endpoint, params=params)
         
         return {
             "status_code": response.status_code,
@@ -24,11 +24,11 @@ class GeneralAPI:
         if custom_params:
             params.update(custom_params)
 
-        response = Request.get(cls.endpoint, payload=params)
+        response = Request.get(cls.endpoint, params=params)
         total_list_of_items = items_per_page = response.json()
         while all and len(items_per_page) == params["per_page"]:
             params["page"] += 1
-            response = Request.get(cls.endpoint, payload=params)
+            response = Request.get(cls.endpoint, params=params)
             items_per_page = response.json()
             total_list_of_items += items_per_page
 
@@ -48,7 +48,7 @@ class GeneralAPI:
     
     @classmethod
     def update_item_by_id(cls, id, params=None):
-        response = Request.put(f"{cls.endpoint}/{id}", payload=params)
+        response = Request.put(f"{cls.endpoint}/{id}", params=params)
 
         return {
             "status_code": response.status_code,

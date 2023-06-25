@@ -14,12 +14,12 @@ class Request:
                    client_secret=APIkeys.secret)
     
     @classmethod
-    def __general_request(cls, method, endpoint, payload=None, headers=None, auth=oauth):
+    def __general_request(cls, method, endpoint, params=None, headers=None, auth=oauth):
         if not headers:
             headers = {"Content-Type": "application/json"}    
         method_interface = getattr(requests, method)
         response = method_interface(url=cls.base_url + endpoint, 
-                                    data=json.dumps(payload), 
+                                    data=json.dumps(params), 
                                     headers=headers,
                                     auth=auth)
         logger.debug(f"Response code: {response.status_code}")
@@ -27,17 +27,17 @@ class Request:
         return response
     
     @classmethod
-    def post(cls, endpoint, payload=None, headers=None):
-        return cls.__general_request("post", endpoint, payload=payload, headers=headers)
+    def post(cls, endpoint, params=None, headers=None):
+        return cls.__general_request("post", endpoint, params=params, headers=headers)
 
     @classmethod
-    def get(cls, endpoint, payload=None, headers=None):
-        return cls.__general_request("get", endpoint, payload=payload, headers=headers)
+    def get(cls, endpoint, params=None, headers=None):
+        return cls.__general_request("get", endpoint, params=params, headers=headers)
     
     @classmethod
-    def put(cls, endpoint, payload=None, headers=None):
-        return cls.__general_request("put", endpoint, payload=payload, headers=headers)
+    def put(cls, endpoint, params=None, headers=None):
+        return cls.__general_request("put", endpoint, params=params, headers=headers)
     
     @classmethod
-    def delete(cls, endpoint, payload=None, headers=None):
-        return cls.__general_request("delete", endpoint, payload=payload, headers=headers)
+    def delete(cls, endpoint, params=None, headers=None):
+        return cls.__general_request("delete", endpoint, params=params, headers=headers)
