@@ -1,4 +1,4 @@
-from src.configs.hosts import DB_HOSTS
+from src.configs.hosts import HOSTS
 from src.configs.env_setup import DBkeys, Environment
 import logging as logger
 import pymysql
@@ -11,13 +11,15 @@ class DBConnection:
 
     env = os.environ.get('ENV', 'test')
     db_auth = DBkeys
+    
 
     def __init__(self) -> None:
-        self.connection_data = {"host": DB_HOSTS[self.machine][self.env]['host'],
-                                "port": DB_HOSTS[self.machine][self.env]['port'],
+        db_host_data = HOSTS[self.machine][self.env]['db']
+        self.connection_data = {"host": db_host_data['host'],
+                                "port": db_host_data['port'],
                                 "user": self.db_auth.user, 
                                 "password": self.db_auth.password,
-                                "db": DB_HOSTS[self.machine][self.env]['name']}
+                                "db": db_host_data['name']}
 
     def execute_sql(self, sql_query):
         connection = pymysql.connect(**self.connection_data)

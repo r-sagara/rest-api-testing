@@ -1,5 +1,5 @@
-from src.configs.hosts import API_HOSTS
-from src.configs.env_setup import APIkeys
+from src.configs.hosts import HOSTS
+from src.configs.env_setup import APIkeys, Environment
 from requests_oauthlib import OAuth1
 import logging as logger
 import requests
@@ -8,8 +8,11 @@ import json
 
 
 class Request:
+    machine = Environment.machine
+    assert machine, f"MACHINE variable is empty value"
+
     env = os.environ.get('ENV', 'test')
-    base_url = API_HOSTS[env]
+    base_url = HOSTS[machine][env]['api']['host']
     oauth = OAuth1(client_key=APIkeys.key, 
                    client_secret=APIkeys.secret)
     
