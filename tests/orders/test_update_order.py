@@ -12,7 +12,7 @@ def test_update_order_status(created_order, new_status):
     
     created_order_id = created_order['id']
     response_update = OrderAPI.update_item_by_id(created_order_id, params={"status": new_status})
-    assert response_update['status_code'] == 201, "Wrong status code"
+    assert response_update['status_code'] == 200, "Wrong status code"
 
     response = OrderAPI.get_item_by_id(created_order_id)
     updated_status = response['json']['status']

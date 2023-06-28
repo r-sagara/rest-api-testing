@@ -1,8 +1,12 @@
 import os
 from dotenv import find_dotenv, load_dotenv
 from dataclasses import dataclass
+import logging as logger
 
-load_dotenv(find_dotenv())
+f = find_dotenv()
+logger.debug(f"Environment file {f}")
+res = load_dotenv(find_dotenv())
+logger.debug(f"Environment file is loaded: {res}")
 
 @dataclass(frozen=True)
 class APIkeys:
