@@ -1,16 +1,16 @@
 import pytest
 import logging as logger
 from src.helpers.dao.product import ProductDAO
-from src.helpers.apis.product import ProductAPI
+from src.helpers.apis.product import ProductHelper
 from tests.test_data.templates import Templates
-from src.helpers.apis.order import OrderAPI
-from src.helpers.apis.customer import CustomerAPI
+from src.helpers.apis.order import OrderHelper
+from src.helpers.apis.customer import CustomerHelper
 from src.utilities.generic import generate_random_email
 
 
 @pytest.fixture(scope='function')
 def created_product_id():
-    response_create = ProductAPI.create_new_item()
+    response_create = ProductHelper.create_new_item()
     id = response_create['json']['id']
     logger.debug(f"Product created: {id}")
     yield id
@@ -21,7 +21,7 @@ def created_product_id():
 @pytest.fixture(scope='function')
 def created_order():
     product_price = 120
-    response_create = ProductAPI.create_new_item(params={'regular_price': str(product_price)})
+    response_create = ProductHelper.create_new_item(params={'regular_price': str(product_price)})
     created_product = response_create['json']
     
     payload = Templates.paid_order()
@@ -30,5 +30,5 @@ def created_order():
     line_item_link['product_id'] = created_product['id']
     line_item_link['quantity'] = 1
 
-    response = OrderAPI.create_new_item(params=payload)
+    response = OrderHelper.create_new_item(params=payload)
     return response['json']

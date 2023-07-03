@@ -1,6 +1,6 @@
 import pytest
 import logging as logger
-from src.helpers.apis.product import ProductAPI
+from src.helpers.apis.product import ProductHelper
 
 
 @pytest.mark.tcid_61
@@ -8,7 +8,7 @@ def test_update_product_regular_price(created_product_id):
     logger.info("TEST: Verify update 'regular_price' updates 'price' field")
 
     new_price = "120.0"
-    response_update = ProductAPI.update_item_by_id(created_product_id, 
+    response_update = ProductHelper.update_item_by_id(created_product_id, 
                                                    params={'regular_price': new_price})
     regular_price_updated = response_update['json']['regular_price']
     price_updated = response_update['json']['price']
@@ -24,11 +24,11 @@ def test_update_product_sale_price_more_than_0(created_product_id):
 
     start_price = "120.0"
     sale_price = "80.0"
-    response_update_regular = ProductAPI.update_item_by_id(created_product_id, 
+    response_update_regular = ProductHelper.update_item_by_id(created_product_id, 
                                                            params={'regular_price': start_price})
     regular_price_before = response_update_regular['json']['regular_price']
 
-    response_update_sale = ProductAPI.update_item_by_id(created_product_id, 
+    response_update_sale = ProductHelper.update_item_by_id(created_product_id, 
                                                         params={'sale_price': sale_price})
     regular_price_after = response_update_sale['json']['regular_price']
     price_updated = response_update_sale['json']['price']
@@ -47,9 +47,9 @@ def test_update_product_sale_price_with_empty_value(created_product_id):
     
     new_price = "120.0"
     sale_price = "80.0"
-    ProductAPI.update_item_by_id(created_product_id, params={'regular_price': new_price, 'sale_price': sale_price})
+    ProductHelper.update_item_by_id(created_product_id, params={'regular_price': new_price, 'sale_price': sale_price})
 
-    response_update = ProductAPI.update_item_by_id(created_product_id, params={'sale_price': " "})
+    response_update = ProductHelper.update_item_by_id(created_product_id, params={'sale_price': " "})
 
     price_updated = response_update['json']['price']
     sale_price_updated = response_update['json']['sale_price']

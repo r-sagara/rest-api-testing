@@ -1,7 +1,7 @@
 from src.utilities.requests import Request
 
 
-class GeneralAPI:
+class BaseHelper:
     endpoint = None
 
     @classmethod

@@ -1,5 +1,5 @@
-from src.helpers.apis.general import GeneralAPI
+from src.helpers.apis.general import BaseHelper
 
 
-class CustomerAPI(GeneralAPI):
+class CustomerHelper(BaseHelper):
     endpoint = "/customers"

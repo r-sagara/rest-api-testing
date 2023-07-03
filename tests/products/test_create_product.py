@@ -1,6 +1,6 @@
 import pytest
 import logging as logger
-from src.helpers.apis.product import ProductAPI
+from src.helpers.apis.product import ProductHelper
 from src.helpers.dao.product import ProductDAO
 
 
@@ -8,7 +8,7 @@ from src.helpers.dao.product import ProductDAO
 def test_create_simple_product():
     logger.info("TEST: Verify 'POST /products' creates a simple product")
     
-    product_response = ProductAPI.create_new_item()
+    product_response = ProductHelper.create_new_item()
     expected_product_object = {
         'name': "Product",
         'type': "simple"

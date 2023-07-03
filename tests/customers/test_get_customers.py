@@ -1,14 +1,14 @@
 import pytest
 import logging as logger
 from src.helpers.dao.customer import CustomerDAO
-from src.helpers.apis.customer import CustomerAPI
+from src.helpers.apis.customer import CustomerHelper
 
 
 @pytest.mark.tcid_30
 def test_get_list_of_all_customers():
     logger.info("TEST: Verify 'GET /customers' lists all users")
     
-    customers = CustomerAPI.get_items()
+    customers = CustomerHelper.get_items()
     customers_code = customers["status_code"]
     assert customers_code == 200, f"Response status code is wrong: {customers_code}. Expected: {200}"
     

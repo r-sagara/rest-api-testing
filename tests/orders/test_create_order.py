@@ -1,10 +1,10 @@
 import pytest
 import logging as logger
-from src.helpers.apis.order import OrderAPI
+from src.helpers.apis.order import OrderHelper
 from src.helpers.dao.order import OrderDAO
-from src.helpers.apis.product import ProductAPI
+from src.helpers.apis.product import ProductHelper
 from tests.test_data.templates import Templates
-from src.helpers.apis.customer import CustomerAPI
+from src.helpers.apis.customer import CustomerHelper
 from src.helpers.json.customer import Customer
 from src.utilities.generic import generate_random_email
 
@@ -14,7 +14,7 @@ def test_create_order_as_guest_user():
     logger.info("TEST: Create a 'paid' order with 'guest' customer")
 
     product_price = 120
-    response_create = ProductAPI.create_new_item(params={'regular_price': str(product_price)})
+    response_create = ProductHelper.create_new_item(params={'regular_price': str(product_price)})
     created_product = response_create['json']
 
     payload = Templates.paid_order()
@@ -26,7 +26,7 @@ def test_create_order_as_guest_user():
     line_item_link['quantity'] = 2
     
     # response verify
-    response = OrderAPI.create_new_item(params=payload)
+    response = OrderHelper.create_new_item(params=payload)
 
     created_order = response['json']
     created_line_item = created_order['line_items'][0]
@@ -52,10 +52,10 @@ def test_create_order_as_guest_user():
 def test_create_order_with_existing_user():
     logger.info("TEST: Create a 'paid' order with 'new created' customer")
 
-    user_id = CustomerAPI.create_new_item(params=Customer().payload())['json']['id']
+    user_id = CustomerHelper.create_new_item(params=Customer().payload())['json']['id']
 
     product_price = 120
-    response_create = ProductAPI.create_new_item(params={'regular_price': str(product_price)})
+    response_create = ProductHelper.create_new_item(params={'regular_price': str(product_price)})
     created_product = response_create['json']
 
     payload = Templates.paid_order()
@@ -68,7 +68,7 @@ def test_create_order_with_existing_user():
     line_item_link['quantity'] = 2
     
     # response verify
-    response = OrderAPI.create_new_item(params=payload)
+    response = OrderHelper.create_new_item(params=payload)
 
     created_order = response['json']
     created_line_item = created_order['line_items'][0]

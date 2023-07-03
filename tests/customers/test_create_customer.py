@@ -1,7 +1,7 @@
 import pytest
 import logging as logger
 from src.helpers.json.customer import Customer
-from src.helpers.apis.customer import CustomerAPI
+from src.helpers.apis.customer import CustomerHelper
 from src.helpers.dao.customer import CustomerDAO
 import src.utilities.generic as gen_utils
 
@@ -13,7 +13,7 @@ def test_create_customer_with_only_email_and_password():
     email = gen_utils.generate_random_email()
     customer = Customer(email=email, password="TEST")
 
-    customer_response = CustomerAPI.create_new_item(customer.payload())
+    customer_response = CustomerHelper.create_new_item(customer.payload())
     
     customer_response_code = customer_response["status_code"]
     assert customer_response_code == 201, f"Response status code is wrong: {customer_response_code}. Expected: {201}"
@@ -36,7 +36,7 @@ def test_create_customer_with_existing_email():
     email = customer_from_db['user_email']
 
     customer = Customer(email=email)
-    customer_response = CustomerAPI.create_new_item(customer.payload())
+    customer_response = CustomerHelper.create_new_item(customer.payload())
     
     customer_response_code = customer_response['status_code']
     assert customer_response_code == 400, f"Response status code is wrong: {customer_response_code}. Expected: {400}"

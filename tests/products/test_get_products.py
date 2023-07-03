@@ -1,6 +1,6 @@
 import pytest
 import logging as logger
-from src.helpers.apis.product import ProductAPI
+from src.helpers.apis.product import ProductHelper
 from src.helpers.dao.product import ProductDAO
 
 
@@ -8,7 +8,7 @@ from src.helpers.dao.product import ProductDAO
 def test_get_products_not_empty():
     logger.info("TEST: Verify 'GET /products' does not return empty")
     
-    response = ProductAPI.get_items(all=False)
+    response = ProductHelper.get_items(all=False)
     response_code = response["status_code"]
     assert response_code == 200, f"Response status code is wrong: {response_code}. Expected: {200}"
     
@@ -23,7 +23,7 @@ def test_get_product_by_id():
     db_product = ProductDAO.get_last_item_in_table()
     db_product_id = db_product['ID']
 
-    response = ProductAPI.get_item_by_id(db_product_id)
+    response = ProductHelper.get_item_by_id(db_product_id)
     response_code = response['status_code']
     product_json = response['json']
     assert response_code == 200, f"Response status code is wrong: {response_code}. Expected: {200}"
@@ -41,10 +41,10 @@ def test_get_list_of_products_with_after_filter():
 
     created_ids = []
     for count in range(2):
-        created_ids.append(ProductAPI.create_new_item()['json']['id'])
+        created_ids.append(ProductHelper.create_new_item()['json']['id'])
     created_ids.sort()
 
-    response = ProductAPI.get_items(all=True, custom_params={"after": timestamp})
+    response = ProductHelper.get_items(all=True, custom_params={"after": timestamp})
     response_code = response['status_code']
     products_json = response['json']
 

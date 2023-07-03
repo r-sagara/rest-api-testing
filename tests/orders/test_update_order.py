@@ -1,6 +1,6 @@
 import pytest
 import logging as logger
-from src.helpers.apis.order import OrderAPI
+from src.helpers.apis.order import OrderHelper
 from src.helpers.dao.order import OrderDAO
 
 
@@ -11,10 +11,10 @@ def test_update_order_status(created_order, new_status):
     logger.info(f"TEST: Update order status to '{new_status}'")
     
     created_order_id = created_order['id']
-    response_update = OrderAPI.update_item_by_id(created_order_id, params={"status": new_status})
+    response_update = OrderHelper.update_item_by_id(created_order_id, params={"status": new_status})
     assert response_update['status_code'] == 200, "Wrong status code"
 
-    response = OrderAPI.get_item_by_id(created_order_id)
+    response = OrderHelper.get_item_by_id(created_order_id)
     updated_status = response['json']['status']
     assert updated_status == new_status, f"Order status is not updated. Actual: {response['status']}. Expected: {new_status}"
 
@@ -25,7 +25,7 @@ def test_update_order_status_with_random_string(created_order):
     
     new_status = 'blabla'
     created_order_id = created_order['id']
-    response = OrderAPI.update_item_by_id(created_order_id, params={"status": new_status})
+    response = OrderHelper.update_item_by_id(created_order_id, params={"status": new_status})
     response_code = response['status_code']
     response_json = response['json']
  
@@ -41,10 +41,10 @@ def test_update_order_custom_note(created_order):
     
     new_customer_note = 'Test customer note'
     created_order_id = created_order['id']
-    response_update = OrderAPI.update_item_by_id(created_order_id, params={"customer_note": new_customer_note})
+    response_update = OrderHelper.update_item_by_id(created_order_id, params={"customer_note": new_customer_note})
     assert response_update['status_code'] == 200, "Wrong status code"
 
-    response_get = OrderAPI.get_item_by_id(created_order_id)
+    response_get = OrderHelper.get_item_by_id(created_order_id)
     assert response_get['status_code'] == 200, "Wrong status code"
 
     actual_customer_note = response_get['json']['customer_note']
