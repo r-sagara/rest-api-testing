@@ -1,6 +1,6 @@
 import pytest
 import logging as logger
-from src.helpers.json.customer import Customer
+from tests.test_data.customer import CustomerTestData
 from src.helpers.apis.customer import CustomerHelper
 from src.helpers.dao.customer import CustomerDAO
 import src.utilities.generic as gen_utils
@@ -11,9 +11,8 @@ def test_create_customer_with_only_email_and_password():
     logger.info("TEST: Verify 'POST /customers' creates user with email and password only")
     
     email = gen_utils.generate_random_email()
-    customer = Customer(email=email, password="TEST")
-
-    customer_response = CustomerHelper.create_new_item(customer.payload())
+    customer_payload = CustomerTestData.get_customer_payload(email=email, password="TEST")
+    customer_response = CustomerHelper.create_new_item(customer_payload)
     
     customer_response_code = customer_response["status_code"]
     assert customer_response_code == 201, f"Response status code is wrong: {customer_response_code}. Expected: {201}"
@@ -35,8 +34,8 @@ def test_create_customer_with_existing_email():
     customer_from_db = CustomerDAO.get_last_item_in_table()
     email = customer_from_db['user_email']
 
-    customer = Customer(email=email)
-    customer_response = CustomerHelper.create_new_item(customer.payload())
+    customer_payload = CustomerTestData.get_customer_payload(email=email)
+    customer_response = CustomerHelper.create_new_item(customer_payload)
     
     customer_response_code = customer_response['status_code']
     assert customer_response_code == 400, f"Response status code is wrong: {customer_response_code}. Expected: {400}"

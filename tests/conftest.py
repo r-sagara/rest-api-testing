@@ -2,10 +2,8 @@ import pytest
 import logging as logger
 from src.helpers.dao.product import ProductDAO
 from src.helpers.apis.product import ProductHelper
-from tests.test_data.templates import Templates
+from tests.test_data.order import OrderTestData
 from src.helpers.apis.order import OrderHelper
-from src.helpers.apis.customer import CustomerHelper
-from src.utilities.generic import generate_random_email
 
 
 @pytest.fixture(scope='function')
@@ -24,11 +22,8 @@ def created_order():
     response_create = ProductHelper.create_new_item(params={'regular_price': str(product_price)})
     created_product = response_create['json']
     
-    payload = Templates.paid_order()
-    
-    line_item_link = payload['line_items'][0]
-    line_item_link['product_id'] = created_product['id']
-    line_item_link['quantity'] = 1
+    order_payload = OrderTestData.get_order_payload(line_items_ids=[created_product['id']], 
+                                                    product_qty=1)
 
-    response = OrderHelper.create_new_item(params=payload)
+    response = OrderHelper.create_new_item(params=order_payload)
     return response['json']
