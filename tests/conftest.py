@@ -4,6 +4,7 @@ from src.helpers.dao.product import ProductDAO
 from src.helpers.apis.product import ProductAPI
 from tests.test_data.templates import Templates
 from src.helpers.apis.order import OrderAPI
+from src.helpers.apis.customer import CustomerAPI
 from src.utilities.generic import generate_random_email
 
 
@@ -23,7 +24,7 @@ def created_order():
     response_create = ProductAPI.create_new_item(params={'regular_price': str(product_price)})
     created_product = response_create['json']
     
-    payload = Templates.paid_order.copy()
+    payload = Templates.paid_order()
     
     line_item_link = payload['line_items'][0]
     line_item_link['product_id'] = created_product['id']

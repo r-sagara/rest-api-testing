@@ -1,9 +1,5 @@
-from dataclasses import dataclass
-
-
-@dataclass(frozen=True)
 class Templates:
-    paid_order = {
+    __paid_order = {
         "payment_method": "bacs",
         "payment_method_title": "Test Method",
         "set_paid": True,
@@ -26,3 +22,8 @@ class Templates:
             }
         ]
     }
+
+    @classmethod
+    def paid_order(cls):
+        return cls.__paid_order.copy()
+    
