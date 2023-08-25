@@ -4,4 +4,4 @@ __pycache__
 report.html
 style.css
 .idea
-__init__
+src/**/__init__*
